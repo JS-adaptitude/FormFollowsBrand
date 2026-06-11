@@ -1,0 +1,280 @@
+/* =========================================================================
+   ADAPTITUDE OS — Design Tokens
+   Single source of truth: colors, type, spacing, radius, shadow, motion.
+   Primary delivery: Google Fonts (Anton, Archivo, JetBrains Mono).
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ---------- COLOR · neutrals (base scale) ---------- */
+  --iron:        #18191B;  /* canonical dark field */
+  --graphite:    #222428;  /* dark surface */
+  --slate:       #2D2F34;  /* dark elevated */
+  --steel:       #3A3D42;  /* dark border-strong */
+  --pewter:      #52565C;  /* dark border-subtle on elevated */
+  --ash:         #8C9097;  /* muted text on dark */
+  --mist:        #B6BAC0;  /* secondary text on dark */
+  --bone:        #E8E5DD;  /* foreground on dark */
+  --ivory:       #F4F1EA;  /* high-emphasis foreground / display on dark */
+  --paper:       #F4F4F3;  /* canonical light field */
+  --linen:       #F8F6F0;  /* light elevated surface */
+
+  /* ---------- COLOR · signal (single accent) ---------- */
+  --cerise:        #ED406B;  /* THE signal color — primary actions, live state */
+  --cerise-deep:   #C92E55;  /* hover on light backgrounds */
+  --cerise-soft:   #3A1A24;  /* signal background tint on dark */
+
+  /* ---------- COLOR · brick (emphasis / destructive) ---------- */
+  --brick:       #D4583A;
+  --brick-deep:  #A8401F;
+  --brick-soft:  #3A1F18;
+
+  /* ---------- COLOR · semantic (tuned to neutral family) ---------- */
+  --success:     #6B9E6B;
+  --warning:     #C49A45;
+  --info:        #6B8FA8;
+  --critical:    var(--brick);
+
+  /* ---------- COLOR · semantic roles (dark = default) ---------- */
+  --bg:               var(--iron);
+  --bg-elev-1:        var(--graphite);
+  --bg-elev-2:        var(--slate);
+  --bg-overlay:       rgb(24 25 27 / 0.78);
+  --fg:               var(--bone);
+  --fg-strong:        var(--ivory);
+  --fg-muted:         var(--ash);
+  --fg-subtle:        var(--pewter);
+  --border-subtle:    var(--steel);
+  --border-strong:    var(--pewter);
+  --accent:           var(--cerise);
+  --accent-on:        #18191B;     /* foreground when on --accent */
+  --accent-soft:      var(--cerise-soft);
+  --emphasis:         var(--brick);
+  --selection:        rgb(237 64 107 / 0.28);
+
+  /* ---------- TYPE · families ---------- */
+  --font-display:  'Anton', 'Oswald', 'Impact', 'Arial Narrow', sans-serif;
+  --font-sans:     'Archivo', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:     'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, monospace;
+
+  /* ---------- TYPE · weights ---------- */
+  --w-light:    300;
+  --w-regular:  400;
+  --w-medium:   500;
+  --w-semi:     600;
+  --w-bold:     700;
+
+  /* ---------- TYPE · sizes (editorial scale, not material) ---------- */
+  --t-eyebrow:  11px;
+  --t-meta:     12px;
+  --t-small:    13px;
+  --t-body:     15px;
+  --t-body-lg:  17px;
+  --t-lead:     20px;
+  --t-h6:       16px;
+  --t-h5:       20px;
+  --t-h4:       28px;
+  --t-h3:       40px;
+  --t-h2:       64px;
+  --t-h1:       96px;
+  --t-display:  144px;
+  --t-mega:     200px;
+
+  /* ---------- TYPE · line heights ---------- */
+  --lh-display: 0.9;
+  --lh-tight:   1.05;
+  --lh-snug:    1.2;
+  --lh-normal:  1.45;
+  --lh-loose:   1.6;
+
+  /* ---------- TYPE · tracking ---------- */
+  --tr-display: -0.02em;
+  --tr-tight:   -0.01em;
+  --tr-normal:  0;
+  --tr-eyebrow: 0.10em;
+  --tr-meta:    0.04em;
+
+  /* ---------- SPACING · 4px base ---------- */
+  --s-0:    0;
+  --s-1:    4px;
+  --s-2:    8px;
+  --s-3:    12px;
+  --s-4:    16px;
+  --s-5:    24px;
+  --s-6:    32px;
+  --s-7:    48px;
+  --s-8:    64px;
+  --s-9:    96px;
+  --s-10:  128px;
+  --s-11:  192px;
+
+  /* ---------- RADIUS · industrial, mostly square ---------- */
+  --radius-none: 0;
+  --radius-xs:   2px;   /* buttons, inputs */
+  --radius-sm:   4px;   /* elevated cards, popovers */
+  --radius-md:   8px;   /* feature surfaces */
+  --radius-full: 999px; /* pills, dots */
+
+  /* ---------- BORDER · hairlines ---------- */
+  --bw-hair:   1px;
+  --bw-strong: 2px;
+
+  /* ---------- SHADOW · restrained ---------- */
+  --shadow-none: none;
+  --shadow-pop:
+    0 1px 0 rgb(0 0 0 / 0.04),
+    0 12px 32px -16px rgb(0 0 0 / 0.45),
+    0 32px 80px -32px rgb(0 0 0 / 0.55);
+  --shadow-soft-light:
+    0 1px 0 rgb(0 0 0 / 0.04),
+    0 8px 24px -12px rgb(0 0 0 / 0.12);
+
+  /* ---------- MOTION · editorial easing ---------- */
+  --ease-out:    cubic-bezier(0.2, 0.7, 0.1, 1);
+  --ease-in:     cubic-bezier(0.7, 0.0, 0.85, 0.3);
+  --ease-inout:  cubic-bezier(0.65, 0.05, 0.35, 1);
+  --dur-quick:   120ms;
+  --dur-base:    200ms;
+  --dur-slow:    320ms;
+  --dur-pulse:   1400ms;
+
+  /* ---------- LAYOUT ---------- */
+  --topbar-h:        56px;
+  --sidebar-w:      248px;
+  --reading-w:      680px;
+  --page-gutter:     96px;
+  --page-gutter-wide: 192px;
+}
+
+/* ---------- LIGHT MODE ---------- */
+[data-theme="light"], .theme-light {
+  --bg:            var(--paper);
+  --bg-elev-1:     var(--linen);
+  --bg-elev-2:     #FFFFFF;
+  --bg-overlay:    rgb(244 244 243 / 0.82);
+  --fg:            var(--iron);
+  --fg-strong:     #0B0C0D;
+  --fg-muted:      #5A5E64;
+  --fg-subtle:     #8C9097;
+  --border-subtle: rgb(24 25 27 / 0.10);
+  --border-strong: rgb(24 25 27 / 0.22);
+  --accent:        var(--cerise-deep);
+  --accent-on:     #18191B;
+  --accent-soft:   #FBDDE3;
+  --selection:     rgb(201 46 85 / 0.32);
+}
+
+/* ===== Base typographic resets ===== */
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--t-body);
+  line-height: var(--lh-normal);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+::selection { background: var(--selection); }
+
+/* ===== Semantic type styles ===== */
+.eyebrow,
+.kicker {
+  font-family: var(--font-sans);
+  font-size: var(--t-eyebrow);
+  font-weight: var(--w-semi);
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  line-height: var(--lh-snug);
+}
+
+.meta {
+  font-family: var(--font-sans);
+  font-size: var(--t-meta);
+  font-weight: var(--w-regular);
+  letter-spacing: var(--tr-meta);
+  color: var(--fg-muted);
+  font-feature-settings: "tnum" 1;
+}
+
+h1, .h1, h2, .h2, h3, .h3 {
+  font-family: var(--font-display);
+  font-weight: var(--w-regular);
+  text-transform: uppercase;
+  letter-spacing: var(--tr-display);
+  line-height: var(--lh-display);
+  color: var(--fg-strong);
+}
+h1, .h1 { font-size: var(--t-h1); }
+h2, .h2 { font-size: var(--t-h2); }
+h3, .h3 { font-size: var(--t-h3); letter-spacing: var(--tr-tight); }
+
+h4, .h4, h5, .h5, h6, .h6 {
+  font-family: var(--font-sans);
+  font-weight: var(--w-semi);
+  letter-spacing: var(--tr-tight);
+  line-height: var(--lh-snug);
+  color: var(--fg-strong);
+}
+h4, .h4 { font-size: var(--t-h4); }
+h5, .h5 { font-size: var(--t-h5); }
+h6, .h6 { font-size: var(--t-h6); text-transform: uppercase; letter-spacing: var(--tr-eyebrow); color: var(--fg-muted); }
+
+.display {
+  font-family: var(--font-display);
+  font-size: var(--t-display);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tr-display);
+  text-transform: uppercase;
+  color: var(--fg-strong);
+}
+.mega {
+  font-family: var(--font-display);
+  font-size: var(--t-mega);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tr-display);
+  text-transform: uppercase;
+  color: var(--fg-strong);
+}
+
+.lead {
+  font-family: var(--font-sans);
+  font-size: var(--t-lead);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-snug);
+  color: var(--fg);
+}
+
+p, .body {
+  font-family: var(--font-sans);
+  font-size: var(--t-body);
+  line-height: var(--lh-normal);
+  color: var(--fg);
+}
+
+.body-lg { font-size: var(--t-body-lg); line-height: var(--lh-normal); }
+.body-sm { font-size: var(--t-small); line-height: var(--lh-normal); }
+
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  color: var(--fg);
+}
+
+/* ===== Utility primitives ===== */
+.surface     { background: var(--bg); }
+.surface-1   { background: var(--bg-elev-1); }
+.surface-2   { background: var(--bg-elev-2); }
+.hairline    { border: var(--bw-hair) solid var(--border-subtle); }
+.hairline-t  { border-top: var(--bw-hair) solid var(--border-subtle); }
+.hairline-b  { border-bottom: var(--bw-hair) solid var(--border-subtle); }
+
+/* ===== Focus ring ===== */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
