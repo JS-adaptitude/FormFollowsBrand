@@ -32,26 +32,45 @@
     active.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-in'));
   };
 
-  // --- email capture mock ---
+  // --- email capture ---
   document.querySelectorAll('.capture-form').forEach((form) => {
-    form.addEventListener('submit', (ev) => {
+    form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const input = form.querySelector('input[type=email]');
+      const btn = form.querySelector('button[type=submit]');
       const val = (input.value || '').trim();
-      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
-      if (!ok) {
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
         input.style.borderColor = 'var(--brick)';
         input.focus();
         return;
       }
       input.style.borderColor = '';
-      const cap = form.closest('.capture');
-      cap.classList.add('is-sent');
+
+      const origLabel = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
       try {
-        const list = JSON.parse(localStorage.getItem('ffb_signups') || '[]');
-        list.push({ email: val, at: Date.now() });
-        localStorage.setItem('ffb_signups', JSON.stringify(list));
-      } catch (e) {}
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: val }),
+        });
+        if (res.ok) {
+          form.closest('.capture').classList.add('is-sent');
+        } else {
+          const data = await res.json().catch(() => ({}));
+          input.style.borderColor = 'var(--brick)';
+          input.title = data.error || 'Something went wrong. Please try again.';
+        }
+      } catch (_) {
+        input.style.borderColor = 'var(--brick)';
+        input.title = 'Network error — please try again.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = origLabel;
+      }
     });
   });
 })();

@@ -1,0 +1,5 @@
+{
+  "outputDirectory": "project/ffb-landing",
+  "buildCommand": null,
+  "installCommand": "npm install"
+}
