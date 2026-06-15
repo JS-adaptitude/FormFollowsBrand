@@ -1,22 +1,17 @@
-const { google } = require('googleapis');
+const { createClient } = require('@supabase/supabase-js');
 const { Resend } = require('resend');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const SHEET_RANGE = 'Signups!A:C';
 
-function sheetsClient() {
-  const auth = new google.auth.GoogleAuth({
-    credentials: {
-      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      private_key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
-    },
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
-  return google.sheets({ version: 'v4', auth });
+function supabase() {
+  return createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 }
 
 function confirmationEmail() {
-  const siteUrl = process.env.SITE_URL || 'https://formfollowsbrand.com';
+  const siteUrl = process.env.SITE_URL || 'https://formfollowsbrand.pub';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,7 +67,7 @@ function confirmationEmail() {
           <td style="padding:28px 0 0;">
             <p style="margin:0 0 2px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:600;color:#F4F1EA;">Jayson Simeon</p>
             <p style="margin:0 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#ED406B;">Founder, Adaptitude</p>
-            <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#3A3D42;line-height:1.6;">You're receiving this because you signed up at formfollowsbrand.com. One email at launch — no spam. To unsubscribe, reply with "unsubscribe."</p>
+            <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#3A3D42;line-height:1.6;">You're receiving this because you signed up at formfollowsbrand.pub. One email at launch — no spam. To unsubscribe, reply with "unsubscribe."</p>
           </td>
         </tr>
 
@@ -100,29 +95,21 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const sheets = sheetsClient();
-    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+    const db = supabase();
 
-    // Duplicate check
-    const { data } = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range: 'Signups!A:A',
-    });
-    const existing = (data.values || []).flat().map((e) => String(e).toLowerCase());
-    const isNew = !existing.includes(email);
+    const { error: insertError } = await db
+      .from('signups')
+      .insert({ email, source: 'ffb-landing' });
 
+    // 23505 = unique_violation (duplicate email) — treat as success
+    if (insertError && insertError.code !== '23505') {
+      throw insertError;
+    }
+
+    const isNew = !insertError;
     if (isNew) {
-      await sheets.spreadsheets.values.append({
-        spreadsheetId,
-        range: SHEET_RANGE,
-        valueInputOption: 'RAW',
-        requestBody: {
-          values: [[email, new Date().toISOString(), 'ffb-landing']],
-        },
-      });
-
       await resend.emails.send({
-        from: process.env.FROM_EMAIL || 'Form Follows Brand <notify@adaptitude.co>',
+        from: process.env.FROM_EMAIL || 'Form Follows Brand <notify@formfollowsbrand.pub>',
         to: email,
         subject: "You're on the list — Form Follows Brand",
         html: confirmationEmail(),
