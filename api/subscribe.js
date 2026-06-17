@@ -115,16 +115,13 @@ module.exports = async function handler(req, res) {
 
     const isNew = !insertError;
     if (isNew) {
-      try {
-        await resend.emails.send({
-          from: process.env.FROM_EMAIL || 'Form Follows Brand <notify@formfollowsbrand.pub>',
-          to: email,
-          subject: "You're on the list — Form Follows Brand",
-          html: confirmationEmail(),
-        });
-      } catch (emailErr) {
-        console.error('[resend]', emailErr?.message ?? emailErr);
-      }
+      const { error: emailError } = await resend.emails.send({
+        from: process.env.FROM_EMAIL || 'Form Follows Brand <notify@formfollowsbrand.pub>',
+        to: email,
+        subject: "You're on the list — Form Follows Brand",
+        html: confirmationEmail(),
+      });
+      if (emailError) console.error('[resend]', JSON.stringify(emailError));
     }
 
     return res.status(200).json({ status: 'ok' });
