@@ -1,18 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
-const { Resend } = require('resend');
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-function supabase() {
-  return createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
-}
-
-function confirmationEmail() {
-  const siteUrl = process.env.SITE_URL || 'https://formfollowsbrand.pub';
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -24,15 +10,11 @@ function confirmationEmail() {
   <tr>
     <td align="center" style="padding:48px 24px 64px;">
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
-
-        <!-- Wordmark -->
         <tr>
           <td style="padding-bottom:32px;border-bottom:1px solid #2D2F34;">
             <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#52565C;">FORM / FOLLOWS / BRAND</p>
           </td>
         </tr>
-
-        <!-- Hero block -->
         <tr>
           <td style="padding:40px 0 32px;">
             <p style="margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#ED406B;">YOU'RE ON THE LIST.</p>
@@ -40,18 +22,13 @@ function confirmationEmail() {
             <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;color:#8C9097;">One email, when the book is live. Nothing before that.</p>
           </td>
         </tr>
-
         <!-- Compact cover on signature glow -->
         <tr>
-          <td background="${siteUrl}/assets/email-glow.png" bgcolor="#18191B" align="center" style="background-color:#18191B;background-image:url('${siteUrl}/assets/email-glow.png');background-repeat:no-repeat;background-position:center center;background-size:100% 100%;padding:40px 0 44px;">
-            <img src="${siteUrl}/assets/cover.webp" width="170" alt="Form Follows Brand — book cover" style="display:block;width:170px;max-width:46%;height:auto;margin:0 auto;border:0;outline:0;box-shadow:0 26px 50px -26px rgba(0,0,0,0.85);" />
+          <td background="${SITE_URL}/assets/email-glow.png" bgcolor="#18191B" align="center" style="background-color:#18191B;background-image:url('${SITE_URL}/assets/email-glow.png');background-repeat:no-repeat;background-position:center center;background-size:100% 100%;padding:40px 0 44px;">
+            <img src="${SITE_URL}/assets/cover.webp" width="170" alt="Form Follows Brand — book cover" style="display:block;width:170px;max-width:46%;height:auto;margin:0 auto;border:0;outline:0;box-shadow:0 26px 50px -26px rgba(0,0,0,0.85);" />
           </td>
         </tr>
-
-        <!-- Divider -->
         <tr><td style="border-top:1px solid #2D2F34;"></td></tr>
-
-        <!-- Book intro -->
         <tr>
           <td style="padding:32px 0;">
             <p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;color:#B6BAC0;">For more than a century, "form follows function" shaped how we build and design. But function is no longer the frontier — advanced manufacturing and shared supply chains have made competence the floor, not the ceiling.</p>
@@ -59,17 +36,13 @@ function confirmationEmail() {
             <table cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td style="background:#ED406B;border-radius:2px;">
-                  <a href="${siteUrl}" style="display:inline-block;padding:13px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.01em;color:#ffffff;text-decoration:none;">Visit the landing page &rarr;</a>
+                  <a href="https://formfollowsbrand.pub" style="display:inline-block;padding:13px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.01em;color:#ffffff;text-decoration:none;">Visit the landing page &rarr;</a>
                 </td>
               </tr>
             </table>
           </td>
         </tr>
-
-        <!-- Divider -->
         <tr><td style="border-top:1px solid #2D2F34;"></td></tr>
-
-        <!-- Author -->
         <tr>
           <td style="padding:28px 0 0;">
             <p style="margin:0 0 2px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:600;color:#F4F1EA;">Jayson Simeon</p>
@@ -77,55 +50,9 @@ function confirmationEmail() {
             <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#3A3D42;line-height:1.6;">You're receiving this because you signed up at formfollowsbrand.pub. One email at launch — no spam. To unsubscribe, reply with "unsubscribe."</p>
           </td>
         </tr>
-
       </table>
     </td>
   </tr>
 </table>
 </body>
-</html>`;
-}
-
-module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  const raw = req.body?.email ?? '';
-  const email = String(raw).trim().toLowerCase();
-
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return res.status(400).json({ error: 'Please enter a valid email address.' });
-  }
-
-  try {
-    const db = supabase();
-
-    const { error: insertError } = await db
-      .from('signups')
-      .insert({ email, source: 'ffb-landing' });
-
-    // 23505 = unique_violation (duplicate email) — treat as success
-    if (insertError && insertError.code !== '23505') {
-      throw insertError;
-    }
-
-    const isNew = !insertError;
-    if (isNew) {
-      await resend.emails.send({
-        from: process.env.FROM_EMAIL || 'Form Follows Brand <notify@formfollowsbrand.pub>',
-        to: email,
-        subject: "You're on the list — Form Follows Brand",
-        html: confirmationEmail(),
-      });
-    }
-
-    return res.status(200).json({ status: 'ok' });
-  } catch (err) {
-    console.error('[subscribe]', err?.message ?? err);
-    return res.status(500).json({ error: 'Something went wrong — please try again.' });
-  }
-};
+</html>
