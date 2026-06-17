@@ -115,12 +115,12 @@ module.exports = async function handler(req, res) {
 
     const isNew = !insertError;
     if (isNew) {
-      await resend.emails.send({
+      resend.emails.send({
         from: process.env.FROM_EMAIL || 'Form Follows Brand <notify@formfollowsbrand.pub>',
         to: email,
         subject: "You're on the list — Form Follows Brand",
         html: confirmationEmail(),
-      });
+      }).catch((err) => console.error('[resend]', err?.message ?? err));
     }
 
     return res.status(200).json({ status: 'ok' });
