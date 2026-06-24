@@ -26,9 +26,9 @@ body[data-accent="brick"]{ --accent:var(--brick); --grad:linear-gradient(105deg,
 body[data-accent="cerise"]{ --accent:var(--cerise); --grad:linear-gradient(105deg,var(--cerise) 0%,var(--cerise) 100%); }
 
 *{ box-sizing:border-box; }
-html{ scroll-behavior:smooth; scroll-padding-top:108px; }
+html{ scroll-behavior:smooth; scroll-padding-top:108px; overflow-x:hidden; }
 body{
-  margin:0; background:var(--bg); color:var(--fg);
+  margin:0; background:var(--bg); color:var(--fg); overflow-x:hidden;
   font-family:var(--font-sans); font-size:16px; line-height:1.5;
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   overflow-x:hidden;
@@ -290,4 +290,23 @@ body[data-hero="b"] #hero-a{ display:none; }
   .hero-cover{ width:min(72%,320px); }
   .hero-b-lower{ grid-template-columns:1fr; }
   .hero-b-coverwrap{ justify-content:flex-start; }
+}
+
+/* ---------- phones ---------- */
+@media(max-width:600px){
+  .topbar{ height:72px; }
+  .topbar .brand-chip img{ height:36px; width:auto !important; }
+  .hero{ padding-top:108px; }
+  .hero-b{ padding-top:120px; }
+  /* let the nowrap display headings wrap instead of being clipped */
+  .thesis-statement{ white-space:normal; }
+  #who .sec-head{ width:auto !important; }
+  #who .sec-head span{ white-space:normal !important; }
+  /* a touch more reading comfort */
+  .force{ padding:24px; }
+  .learn-card{ padding:26px 24px; }
+  .aud-card{ padding:28px 24px; }
+  .author-creds{ gap:8px; }
+  /* keep the decorative cover glow from bleeding past the viewport */
+  .hero-cover-glow{ inset:-18% 0; }
 }
